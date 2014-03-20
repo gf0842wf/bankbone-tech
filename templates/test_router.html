@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test router</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
+<script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script src="http://documentcloud.github.io/backbone/backbone-min.js"></script>
+<body>
+<a href="#/posts/120">Post 120</a>
+<a href="#/static/img/home-1.jpg">download gif</a>
+<a href="#/dashboard/graph">Load Route/Action View</a>
+<img class="pure-img-responsive" src="/static/img/home-1.jpg" alt="Peyto Lake">
+</body>
+<script>
+(function ($) {
+    //Backbone.Router会把你连接中的#标签当做是url路径
+    /**
+    // 1.一个简单的例子
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            "*actions" : "defaultRoute" 
+        },
+        defaultRoute : function(actions){
+            alert(actions);
+        }
+    });
+
+    var app_router = new AppRouter;
+
+    Backbone.history.start();
+
+
+    // 2.既然是对url进行匹配那么它应该不仅仅只是简单的静态匹配，应该具有传递参数的功能，所以下面再来一个动态的router的例子.
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            "/posts/:id" : "getPost", // 类似tornado正则匹配 r"/posts/(\d+)"
+            "*actions" : "defaultRoute"
+        },
+        getPost: function(id) {
+            alert(id);
+        },
+        defaultRoute : function(actions){
+            alert(actions);
+        }
+    });
+
+    var app_router = new AppRouter;
+
+    Backbone.history.start();
+    **/
+    // 从上面已经可以看到匹配#标签之后内容的方法,有两种:一种是用":"来把#后面的对应的位置作为参数;还有一种是"*"，它可以匹配所有的url，下面再来演练一下。
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            "/posts/:id" : "getPost",
+            "/static/*path": "downloadFile",  // 对应的链接为<a href="#/static/img/home-1.jpg">download gif</a>
+            "/:route/:action": "loadView",      // 对应的链接为<a href="#/dashboard/graph">Load Route/Action View</a>
+            "*actions" : "defaultRoute"
+        },
+        getPost: function(id) {
+            alert(id);
+        },
+        defaultRoute : function(actions){ 
+            alert(actions);
+        },
+        downloadFile: function( path ){
+            alert(path); // static/img/home-1.jpg
+        },
+        loadView: function( route, action ){
+            alert(route + "_" + action); // dashboard_graph
+        }
+    });
+
+    var app_router = new AppRouter;
+
+    Backbone.history.start();
+
+})(jQuery);
+</script>
+</html>

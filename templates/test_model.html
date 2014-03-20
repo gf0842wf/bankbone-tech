@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test model</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<ul id="world_list">
+</ul>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
+<script src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+<script src="http://documentcloud.github.io/backbone/backbone-min.js"></script>
+<script>
+(function ($) {
+    Man = Backbone.Model.extend({
+        url: '/test_model/', // 让tornado render这个html文件..
+        initialize: function(){
+            alert("Hey, you create me!");
+            this.bind("change:name", function(){
+                var name = this.get("name");
+                alert("你改变了name属性为:" + name);
+            });
+        },
+        defaults: {
+            name: '张三',
+            age: '25',
+        },
+        aboutMe: function(){
+            return '我叫' + this.get('name') + ',' + this.get('age') + '岁';
+        },
+        validate: function(attributes){
+            if(attributes.name == ''){
+                return "name不能为空!";
+            }
+        }
+    });
+    var man = new Man;
+    man.set({name: 'fk', age: '24'})
+    // man.set({name: ''})
+    // alert(man.get('name'))
+    
+    // post 模型对应的url, 数据格式为 {"name":"fk", "age":24}
+    man.save(); 
+    
+    // get 1
+    man.fetch({url: '/test_model/test_get', 
+	    success: function(model, response){
+	    	alert('success:' + model.get('message')); // tornado返回的json有message字段
+	    }, 
+	    error: function(){
+	    	alert('error');
+	    }
+    })
+        
+    // get 2
+    // 这样，就会发送get请求到/getmans/这个url中，
+    // 服务器返回的结果样式应该是对应的json格式数据，同save时POST过去的格式, 同时把model的属性都修改成了服务器返回的json相同的
+    man.fetch({url: '/test_model/test_get'});
+
+    
+})(jQuery);
+</script>
+</html>
